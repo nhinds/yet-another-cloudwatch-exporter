@@ -140,7 +140,7 @@ func scrapeDiscoveryJob(job job, tagsOnMetrics exportedTagsOnMetrics, clientTag 
 		go func() {
 			for j := range job.Metrics {
 				metric := job.Metrics[j]
-				dimensions := detectDimensionsByService(resource.Service, resource.ID, clientCloudwatch)
+				dimensions := detectDimensionsByService(resource.Service, resource.ID, clientCloudwatch, len(metric.AdditionalDimensions) == 0)
 				dimensions = addAdditionalDimensions(dimensions, metric.AdditionalDimensions)
 				go func() {
 					defer wg.Done()

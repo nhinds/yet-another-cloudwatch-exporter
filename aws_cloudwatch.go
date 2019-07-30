@@ -232,7 +232,7 @@ func queryAvailableDimensions(resource string, namespace *string, clientCloudwat
 	return dimensions
 }
 
-func detectDimensionsByService(service *string, resourceArn *string, clientCloudwatch cloudwatchInterface) (dimensions []*cloudwatch.Dimension) {
+func detectDimensionsByService(service *string, resourceArn *string, clientCloudwatch cloudwatchInterface, includeS3StorageType bool) (dimensions []*cloudwatch.Dimension) {
 	arnParsed, err := arn.Parse(*resourceArn)
 
 	if err != nil {
@@ -255,7 +255,9 @@ func detectDimensionsByService(service *string, resourceArn *string, clientCloud
 		dimensions = append(dimensions, buildDimension("ClientId", arnParsed.AccountID))
 	case "s3":
 		dimensions = buildBaseDimension(arnParsed.Resource, "BucketName", "")
-		dimensions = append(dimensions, buildDimension("StorageType", "AllStorageTypes"))
+		if includeS3StorageType {
+			dimensions = append(dimensions, buildDimension("StorageType", "AllStorageTypes"))
+		}
 	case "efs":
 		dimensions = buildBaseDimension(arnParsed.Resource, "FileSystemId", "file-system/")
 	case "ebs":
